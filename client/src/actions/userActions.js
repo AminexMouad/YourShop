@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  DETAILS_USER_FAIL,
+  DETAILS_USER_REQUEST,
+  DETAILS_USER_SUCCESS,
   LOGIN_USER_FAIL,
   LOGIN_USER_REQUEST,
   LOGIN_USER_SUCCESS,
@@ -66,6 +69,34 @@ export const register = (name, email, password) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: REGISTER_USER_FAIL,
+      payload: error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
+export const getUserDetails = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: DETAILS_USER_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`api/users/${id}`, config);
+
+    dispatch({ type: DETAILS_USER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: DETAILS_USER_FAIL,
       payload: error.response.data.message
         ? error.response.data.message
         : error.message,
