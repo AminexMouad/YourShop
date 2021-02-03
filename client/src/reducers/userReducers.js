@@ -9,6 +9,9 @@ import {
   REGISTER_USER_FAIL,
   REGISTER_USER_REQUEST,
   REGISTER_USER_SUCCESS,
+  UPDATE_PROFILE_USER_FAIL,
+  UPDATE_PROFILE_USER_REQUEST,
+  UPDATE_PROFILE_USER_SUCCESS,
 } from '../constants/userConstants';
 
 export const userLoginReducer = (state = {}, action) => {
@@ -19,6 +22,7 @@ export const userLoginReducer = (state = {}, action) => {
       return { loading: false, userInfo: action.payload };
     case LOGIN_USER_FAIL:
       return { loading: false, error: action.payload };
+
     case LOGOUT_USER:
       return { userInfo: {} };
     default:
@@ -46,6 +50,19 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
     case DETAILS_USER_SUCCESS:
       return { loading: false, user: action.payload };
     case DETAILS_USER_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateProfileReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UPDATE_PROFILE_USER_REQUEST:
+      return { ...state, loading: true };
+    case UPDATE_PROFILE_USER_SUCCESS:
+      return { loading: false, success: true, userInfo: action.payload };
+    case UPDATE_PROFILE_USER_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;
