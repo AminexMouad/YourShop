@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { ORDER_LIST_MY_RESET } from '../constants/orderConstants';
 import {
   DETAILS_USER_FAIL,
   DETAILS_USER_REQUEST,
+  DETAILS_USER_RESET,
   DETAILS_USER_SUCCESS,
   LOGIN_USER_FAIL,
   LOGIN_USER_REQUEST,
@@ -47,6 +49,8 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo');
   dispatch({ type: LOGOUT_USER });
+  dispatch({ type: DETAILS_USER_RESET });
+  dispatch({ type: ORDER_LIST_MY_RESET });
 };
 
 export const register = (name, email, password) => async (dispatch) => {
