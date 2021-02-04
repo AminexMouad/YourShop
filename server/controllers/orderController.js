@@ -52,7 +52,6 @@ const getOrderById = asyncHandler(async (req, res) => {
     throw new Error('Order not found');
   }
 });
-export { addOrderItems, getOrderById };
 
 // @desc  Update order to paid
 // @route  GET /api/orders/:id/pay
