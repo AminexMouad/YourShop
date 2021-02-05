@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { listProducts, deleteProduct } from '../actions/productActions';
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from '../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -15,6 +20,14 @@ const ProductListScreen = ({ match, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
+
   const productDelete = useSelector((state) => state.productDelete);
   const {
     loading: loadingDelete,
@@ -23,14 +36,39 @@ const ProductListScreen = ({ match, history }) => {
   } = productDelete;
 
   useEffect(() => {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
     if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
+      if (successCreate) {
+        history.push(`/admin/product/${createdProduct._id}/edit`);
+      } else {
+        dispatch(listProducts());
+      }
     } else {
       history.push('/login');
     }
-  }, [dispatch, history, userInfo, successDelete]);
 
-  const createProductHandler = (product) => {};
+    // if (userInfo && !userInfo.isAdmin) {
+    //   history.push('/login');
+    // }
+
+    // if (successCreate) {
+    //   history.push(`/admin/product/${createdProduct._id}/edit`);
+    // } else {
+    //   dispatch(listProducts());
+    // }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+  ]);
+
+  const createProductHandler = (product) => {
+    dispatch(createProduct());
+  };
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure to delete the user')) {
@@ -52,6 +90,8 @@ const ProductListScreen = ({ match, history }) => {
       </Row>
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
