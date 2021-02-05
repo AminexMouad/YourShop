@@ -189,8 +189,8 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.delete(`/api/users/${id}`, config);
-    dispatch({ type: DELETE_USER_SUCCESS, payload: data });
+    await axios.delete(`/api/users/${id}`, config);
+    dispatch({ type: DELETE_USER_SUCCESS });
   } catch (error) {
     dispatch({
       type: DELETE_USER_FAIL,
