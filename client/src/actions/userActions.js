@@ -22,6 +22,9 @@ import {
   UPDATE_PROFILE_USER_FAIL,
   UPDATE_PROFILE_USER_REQUEST,
   UPDATE_PROFILE_USER_SUCCESS,
+  UPDATE_USER_FAIL,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
 } from '../constants/userConstants';
 
 export const login = (email, password) => async (dispatch) => {
@@ -194,6 +197,34 @@ export const deleteUser = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: DELETE_USER_FAIL,
+      payload: error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
+export const updateUser = (user) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: UPDATE_USER_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    const { data } = await axios.put(`/api/users/${user._id}`, user, config);
+    dispatch({ type: UPDATE_USER_SUCCESS });
+
+    dispatch({ type: DETAILS_USER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_USER_FAIL,
       payload: error.response.data.message
         ? error.response.data.message
         : error.message,
