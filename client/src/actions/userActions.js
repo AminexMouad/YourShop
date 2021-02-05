@@ -5,6 +5,9 @@ import {
   DETAILS_USER_REQUEST,
   DETAILS_USER_RESET,
   DETAILS_USER_SUCCESS,
+  LIST_USER_FAIL,
+  LIST_USER_REQUEST,
+  LIST_USER_SUCCESS,
   LOGIN_USER_FAIL,
   LOGIN_USER_REQUEST,
   LOGIN_USER_SUCCESS,
@@ -97,7 +100,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`api/users/${id}`, config);
+    const { data } = await axios.get(`/api/users/${id}`, config);
 
     dispatch({ type: DETAILS_USER_SUCCESS, payload: data });
   } catch (error) {
@@ -125,7 +128,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.put(`api/users/profile`, user, config);
+    const { data } = await axios.put(`/api/users/profile`, user, config);
 
     dispatch({ type: UPDATE_PROFILE_USER_SUCCESS, payload: data });
     dispatch({ type: LOGIN_USER_SUCCESS, payload: data });
@@ -134,6 +137,32 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: UPDATE_PROFILE_USER_FAIL,
+      payload: error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
+export const listUsers = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: LIST_USER_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    const { data } = await axios.get(`/api/users`, config);
+    dispatch({ type: LIST_USER_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: LIST_USER_FAIL,
       payload: error.response.data.message
         ? error.response.data.message
         : error.message,
