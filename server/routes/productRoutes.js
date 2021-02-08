@@ -11,7 +11,7 @@ import {
 import { admin, protect } from '../middleware/authMiddleware.js';
 
 router.route('/').get(getProducts).post(protect, admin, createProduct);
-router.route('/:id/reviews').post(protect, admin, createProductReview);
+router.route('/:id/reviews').post(protect, createProductReview);
 
 router
   .route('/:id')
